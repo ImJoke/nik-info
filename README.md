@@ -54,6 +54,8 @@ options:
   -f FILE [FILE ...], --file FILE [FILE ...]
                         Path to the file containing NIK values
 ```
+# Note
+Try to combine this tool with the [nik-parser](https://github.com/ImJoke/nik-parser "nik-parser") tool
 # Supported version
 - Python ≥ 3.x.x
 # References
