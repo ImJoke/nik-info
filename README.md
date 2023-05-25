@@ -56,7 +56,7 @@ options:
 ```
 # Note
 Try to combine this tool with the [nik-parser](https://github.com/ImJoke/nik-parser "nik-parser") tool
-# Supported version
-- Python ≥ 3.x.x
+# Tested on
+- Windows 11 + Python ≥ 3.x.x + chrome
 # References
 - [kpu.go.id](https://cekdptonline.kpu.go.id "cekdptonline")
