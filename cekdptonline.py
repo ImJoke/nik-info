@@ -5,41 +5,47 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+form = [
+     "Nama Pemilih",
+     "Nomor Induk Kependudukan (NIK)",
+     "Nomor Kartu Keluarga (NKK)",
+     "Tempat Pemungutan Suara (TPS)"
+]
+
 def main(nik: list|str):
-    try:
         chrome_options = Options()
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         chrome_options.add_argument("--headless=new")
         driver = webdriver.Chrome(options=chrome_options)
         driver.get("https://cekdptonline.kpu.go.id/")
-        info_dict = {}
 
-        for n, i in enumerate(nik, 1):
+        for ni in nik:
             input_field = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[type="text"].form-control')))
             input_field.clear()
-            input_field.send_keys(i)
+            input_field.send_keys(ni)
 
             buttons = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//button[normalize-space()="Pencarian"]')))
             buttons.click()
 
-            result_elements = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, '//p[@class="list-item-heading mb-1 color-theme-1 mb-1" or @class="mb-2 text-xl-left" or @class="list-item-heading mb-1 color-theme-1 mb-1 text-xl-left"]')))
-            for i in range(0, len(result_elements), 2):
-                key = result_elements[i].text
-                value = result_elements[i + 1].text
-                info_dict[key] = value
+            result_elements = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, '//p[@data-v-6caa6b6a and @class="mb-2 text-xl-left"] | //h2[@data-v-6caa6b6a and @class="mb-2"]')))# and @class="mb-2 text-xl-left"]')))
 
-            print(f"{n}. ", end='')
-            for key, value in info_dict.items():
-                print(f"{key} : {value}")
+            for f, i in zip(form, result_elements):
+                if len(result_elements) == 4:
+                    print(f"{f} : \x1b[0;32m{i.text}\033[0m")
+
+                elif len(result_elements) == 1:
+                    print(f"\x1b[1;31m{i.text}\033[0m")
+
+                else:
+                    print('\x1b[0;32m'+''.join([f"{ord(i):X}" for i in f"{i.text} - {ni[0]}"]))
+                    print("\x1b[1;31mBUG : Please submit issue to https://github.com/ImJoke/nik-info\033[0m")
             print()
 
-            buttons = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//button[normalize-space()="Kembali"]')))
+
+            buttons = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, '//button[normalize-space()="Kembali"]')))
             buttons.click()
 
         driver.quit()
-
-    except BaseException as e:
-        print(f"[Error] Invalid NIK : {e}")
 
 def parserList(listData: list) -> list:
     return [i.replace(',', ' ').split() for i in listData]
