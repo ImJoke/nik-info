@@ -1,6 +1,6 @@
 # Install
 ```sh
-git clone https://github.com/ImJoke/nik-info
+git clone --depth=1 https://github.com/ImJoke/nik-info
 cd nik-info
 pip install -r requirements.txt
 ```
