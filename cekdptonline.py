@@ -1,4 +1,5 @@
-import argparse, os
+from pathlib import Path
+import argparse
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -58,16 +59,17 @@ def validator(nik: list): # Just to be able to enter nik into cekdptonline
 def parserList(listData: list) -> list:
     return [i.replace(',', ' ').split() for i in listData]
 
+def checkPath(fileName: str) -> bool: # BUG potential
+    thisFileLST = __file__.replace('\\', '/').rsplit('/', maxsplit=1)
+    fileNameLST = str(Path(fileName).absolute()).replace('\\', '/').rsplit('/', maxsplit=1)
+
+    return Path(fileName).is_file() and thisFileLST[0].lower() == fileNameLST[0].lower()
+
 def fileLoader(filePath: str):
-    currentScriptPath = os.path.abspath(__file__)
-    absoluteFilePath = os.path.abspath(filePath)
-
-    if os.path.dirname(currentScriptPath) != os.path.dirname(absoluteFilePath):
-        raise ValueError("File path dares to wander from the script's domain!")
-
     for i in filePath:
-        with open(i[0], 'r') as file:
-            main(file.read().replace(',', ' ').split())
+        if checkPath(i[0]):
+            with open(i[0], 'r') as file:
+                main(file.read().replace(',', ' ').split())
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get NIK information using NIK values from a file.")
