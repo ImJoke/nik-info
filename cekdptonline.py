@@ -1,4 +1,4 @@
-import argparse
+import argparse, os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -59,6 +59,12 @@ def parserList(listData: list) -> list:
     return [i.replace(',', ' ').split() for i in listData]
 
 def fileLoader(filePath: str):
+    currentScriptPath = os.path.abspath(__file__)
+    absoluteFilePath = os.path.abspath(filePath)
+
+    if os.path.dirname(currentScriptPath) != os.path.dirname(absoluteFilePath):
+        raise ValueError("File path dares to wander from the script's domain!")
+
     for i in filePath:
         with open(i[0], 'r') as file:
             main(file.read().replace(',', ' ').split())
