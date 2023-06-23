@@ -15,6 +15,7 @@ form = [
 
 def main(nik: list):
         nik = validator(nik)
+
         if nik:
             chrome_options = Options()
             chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -30,7 +31,7 @@ def main(nik: list):
                 buttons = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//button[normalize-space()="Pencarian"]')))
                 buttons.click()
 
-                result_elements = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, '//p[@data-v-6caa6b6a and @class="mb-2 text-xl-left"] | //h2[@data-v-6caa6b6a and @class="mb-2"]')))
+                result_elements = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, '//p[@class="mb-2 text-xl-left"] | //h2[@class="mb-2"]')))
 
                 for f, i in zip(form, result_elements):
                     if len(result_elements) == 4:
@@ -51,15 +52,16 @@ def main(nik: list):
         
 
 def validator(nik: list): # Just to be able to enter nik into cekdptonline
-    niks = [i[0] for i in nik if 5 < len(i[0]) < 17]
+    niks = [i for i in nik if 5 < len(i) < 17]
+
     if len(nik) != len(niks):
         print(f"Invalid NIKs : {','.join(i[0] for i in nik if not (5 < len(i[0]) < 17))}")
     return niks
 
 def parserList(listData: list) -> list:
-    return [i.replace(',', ' ').split() for i in listData]
+    return [x for i in listData for x in i.replace(',', ' ').split()]
 
-def checkPath(fileName: str) -> bool: # BUG potential
+def checkPath(fileName: str) -> bool:
     thisFileLST = __file__.replace('\\', '/').rsplit('/', maxsplit=1)
     fileNameLST = str(Path(fileName).absolute()).replace('\\', '/').rsplit('/', maxsplit=1)
 
@@ -67,9 +69,11 @@ def checkPath(fileName: str) -> bool: # BUG potential
 
 def fileLoader(filePath: str):
     for i in filePath:
-        if checkPath(i[0]):
-            with open(i[0], 'r') as file:
+        if checkPath(i):
+            with open(i, 'r') as file:
                 main(file.read().replace(',', ' ').split())
+        else:
+            print("Invalid path!")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get NIK information using NIK values from a file.")
